@@ -14,6 +14,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.excel.AbstractExcelItemReader;
 import org.springframework.batch.item.excel.RowCallbackHandler;
+import org.springframework.batch.item.excel.Sheet;
 import org.springframework.batch.item.excel.mapping.PassThroughRowMapper;
 import org.springframework.batch.item.excel.poi.PoiItemReader;
 import org.springframework.batch.item.excel.support.rowset.RowSet;
@@ -99,7 +100,18 @@ public class UploadController {
             itemReader.afterPropertiesSet();
             ExecutionContext executionContext = new ExecutionContext();
             itemReader.open(executionContext);
-            itemReader.getNumberOfSheets();
+            int numberOfSheets = itemReader.getNumberOfSheets();
+            
+            for(int i=0 ; i< numberOfSheets; i++) {
+            	Sheet sheet = itemReader.getSheet(i);
+            	System.out.println(sheet.getName());
+            	for(int j=0; j< sheet.getNumberOfRows() ; j++) {
+            		String[] row = sheet.getRow(j);
+            		System.out.println("Read: " + StringUtils.arrayToCommaDelimitedString(row));
+            	}
+            }
+            
+            /*
             String[] row;
             do {
                 row = (String[]) itemReader.read();
@@ -107,7 +119,7 @@ public class UploadController {
                 if (row != null) {
                     //assertEquals(6, row.length);
                 }
-            } while (row != null);
+            } while (row != null);*/
             //int readCount = (Integer) ReflectionTestUtils.getField(itemReader, "currentItemCount" );
             //assertEquals(4321, readCount);
         

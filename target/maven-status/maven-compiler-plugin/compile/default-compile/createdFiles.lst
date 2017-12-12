@@ -20,6 +20,7 @@ org\springframework\batch\item\excel\support\rowset\RowSetFactory.class
 org\springframework\batch\item\excel\poi\PoiItemReader.class
 org\springframework\batch\item\excel\poi\PoiSheet.class
 org\springframework\batch\item\excel\support\rowset\DefaultRowSetFactory.class
+com\mkyong\controller\ScheduledTasks.class
 com\mkyong\SpringWebMvcConfig.class
 org\springframework\batch\item\excel\RowMapper.class
 org\springframework\batch\item\excel\support\rowset\RowSetMetaData.class

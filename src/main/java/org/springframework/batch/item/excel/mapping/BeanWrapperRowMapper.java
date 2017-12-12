@@ -176,7 +176,7 @@ public class BeanWrapperRowMapper<T> extends DefaultPropertyEditorRegistrar impl
      * @return a {@link DataBinder} that can be used to bind properties to the
      * target.
      */
-    protected DataBinder createBinder(Object target) {
+    public DataBinder createBinder(Object target) {
         DataBinder binder = new DataBinder(target);
         binder.setIgnoreUnknownFields(!this.strict);
         initBinder(binder);
@@ -196,7 +196,7 @@ public class BeanWrapperRowMapper<T> extends DefaultPropertyEditorRegistrar impl
      * @param binder new binder instance
      * @see #createBinder(Object)
      */
-    protected void initBinder(DataBinder binder) {
+    public void initBinder(DataBinder binder) {
     }
 
     @SuppressWarnings("unchecked")
