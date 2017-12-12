@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.springframework.batch.item.excel.jxl.JxlItemReaderTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.505 sec
