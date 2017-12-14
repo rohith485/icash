@@ -61,8 +61,7 @@ import java.util.concurrent.ConcurrentMap;
  * match is found. If more than one match is found there will be an error.
  *
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public class BeanWrapperRowMapper<T> extends DefaultPropertyEditorRegistrar implements RowMapper<T>, BeanFactoryAware, InitializingBean {
 
@@ -144,16 +143,16 @@ public class BeanWrapperRowMapper<T> extends DefaultPropertyEditorRegistrar impl
     }
 
     /**
-     * Map the {@link org.springframework.batch.item.file.transform.FieldSet} to an object retrieved from the enclosing Spring
+     * Map the {@link com.icashflow.batch.item.file.transform.FieldSet} to an object retrieved from the enclosing Spring
      * context, or to a new instance of the required type if no prototype is
      * available.
      *
      * @throws org.springframework.validation.BindException           if there is a type conversion or other error (if
      *                                                                the {@link org.springframework.validation.DataBinder} from {@link #createBinder(Object)} has errors
      *                                                                after binding).
-     * @throws org.springframework.beans.NotWritablePropertyException if the {@link org.springframework.batch.item.file.transform.FieldSet} contains a
+     * @throws org.springframework.beans.NotWritablePropertyException if the {@link com.icashflow.batch.item.file.transform.FieldSet} contains a
      *                                                                field that cannot be mapped to a bean property.
-     * @see org.springframework.batch.item.file.mapping.FieldSetMapper#mapFieldSet(org.springframework.batch.item.file.transform.FieldSet)
+     * @see com.icashflow.batch.item.file.mapping.FieldSetMapper#mapFieldSet(com.icashflow.batch.item.file.transform.FieldSet)
      */
     @Override
     public T mapRow(RowSet rs) throws BindException {

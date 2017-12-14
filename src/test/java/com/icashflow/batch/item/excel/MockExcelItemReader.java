@@ -1,4 +1,4 @@
-package org.springframework.batch.item.excel;
+package com.icashflow.batch.item.excel;
 
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +10,9 @@ import com.icashflow.batch.item.excel.AbstractExcelItemReader;
 import com.icashflow.batch.item.excel.Sheet;
 
 /**
- * Created by in329dei on 17-9-2014.
+ * @author Rohith Pingili
+ *
+ * @param <T>
  */
 public class MockExcelItemReader<T> extends AbstractExcelItemReader<T> {
 

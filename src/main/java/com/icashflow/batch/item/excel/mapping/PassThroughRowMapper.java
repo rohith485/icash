@@ -22,8 +22,7 @@ import com.icashflow.batch.item.excel.support.rowset.RowSet;
  * Pass through {@link RowMapper} useful for passing the orginal String[]
  * back directly rather than a mapped object.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public class PassThroughRowMapper implements RowMapper<String[]> {
 

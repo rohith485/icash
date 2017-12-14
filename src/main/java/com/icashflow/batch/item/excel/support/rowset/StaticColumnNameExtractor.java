@@ -22,8 +22,7 @@ import com.icashflow.batch.item.excel.Sheet;
  *  the column names. Useful for those situations in which an Excel file without a header row
  *  is read
  *
- *  @author Marten Deinum
- *  @since 0.5.0
+ *  @author Rohith Kumar Pingili
  */
 public class StaticColumnNameExtractor implements ColumnNameExtractor {
 

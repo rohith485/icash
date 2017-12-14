@@ -29,13 +29,12 @@ import com.icashflow.batch.item.excel.support.rowset.RowSet;
 import com.icashflow.batch.item.excel.support.rowset.RowSetFactory;
 
 /**
- * {@link org.springframework.batch.item.ItemReader} implementation to read an Excel
+ * {@link com.icashflow.batch.item.ItemReader} implementation to read an Excel
  * file. It will read the file sheet for sheet and row for row. It is loosy based on
- * the {@link org.springframework.batch.item.file.FlatFileItemReader}
+ * the {@link com.icashflow.batch.item.file.FlatFileItemReader}
  *
  * @param <T> the type
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public abstract class AbstractExcelItemReader<T> extends AbstractItemCountingItemStreamItemReader<T> implements
         ResourceAwareItemReaderItemStream<T>, InitializingBean {
@@ -183,7 +182,7 @@ public abstract class AbstractExcelItemReader<T> extends AbstractItemCountingIte
 
     /**
      * In strict mode the reader will throw an exception on
-     * {@link #open(org.springframework.batch.item.ExecutionContext)} if the input resource does not exist.
+     * {@link #open(com.icashflow.batch.item.ExecutionContext)} if the input resource does not exist.
      *
      * @param strict true by default
      */

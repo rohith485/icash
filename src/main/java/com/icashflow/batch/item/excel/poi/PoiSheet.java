@@ -30,8 +30,7 @@ import java.util.List;
 /**
  * Sheet implementation for Apache POI.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public class PoiSheet implements Sheet {
 

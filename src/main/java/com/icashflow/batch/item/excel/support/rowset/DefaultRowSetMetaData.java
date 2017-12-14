@@ -23,8 +23,7 @@ import com.icashflow.batch.item.excel.Sheet;
  * Requires a {@code Sheet} and {@code ColumnNameExtractor} to operate correctly.
  * Delegates the retrieval of the column names to the {@code ColumnNameExtractor}.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public class DefaultRowSetMetaData implements RowSetMetaData {
 

@@ -22,8 +22,7 @@ import com.icashflow.batch.item.excel.Sheet;
 /**
  * Default implementation of the {@code RowSet} interface.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  *
  * @see com.icashflow.batch.item.excel.support.rowset.DefaultRowSetFactory
  */

@@ -20,8 +20,7 @@ import com.icashflow.batch.item.excel.Sheet;
 /**
  * Contract for extracting column names for a given {@code sheet}.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public interface ColumnNameExtractor {
 

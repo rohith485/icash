@@ -22,8 +22,7 @@ import org.springframework.batch.item.ParseException;
  * name of the excel file can be passed in so that in exception handling we can reuse it. This class only has
  * simply dependencies to make it is generic as possible.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public class ExcelFileParseException extends ParseException {
 

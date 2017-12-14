@@ -15,12 +15,7 @@ import java.util.List;
  *
  * Copied and slightly modified from Spring core,
  *
- * @author Alef Arendsen
- * @author Arjen Poutsma
- * @author Juergen Hoeller
- * @author Dave Syer
- *
- * @since 1.0
+ * @author Rohith Kumar Pingili
  * @see #forProperty(String, Class)
  */
 final class PropertyMatches {

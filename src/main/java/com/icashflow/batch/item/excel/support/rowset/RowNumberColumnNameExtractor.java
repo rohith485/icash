@@ -21,8 +21,7 @@ import com.icashflow.batch.item.excel.Sheet;
  * {@code ColumnNameExtractor} which returns the values of a given row (default is 0) as the column
  * names.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public class RowNumberColumnNameExtractor implements ColumnNameExtractor {
 

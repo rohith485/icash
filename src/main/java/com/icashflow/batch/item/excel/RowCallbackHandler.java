@@ -21,8 +21,7 @@ import com.icashflow.batch.item.excel.support.rowset.RowSet;
 /**
  * Callback to handle skipped lines. Useful for header/footer processing.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public interface RowCallbackHandler {
 

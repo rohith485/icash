@@ -1,14 +1,14 @@
-package org.springframework.batch.item.excel.mapping;
+package com.icashflow.batch.item.excel.mapping;
 
 import org.junit.Test;
-import org.springframework.batch.item.Player;
-import org.springframework.batch.item.excel.MockSheet;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import com.icashflow.batch.item.Player;
+import com.icashflow.batch.item.excel.MockSheet;
 import com.icashflow.batch.item.excel.mapping.BeanWrapperRowMapper;
 import com.icashflow.batch.item.excel.support.rowset.DefaultRowSetFactory;
 import com.icashflow.batch.item.excel.support.rowset.RowSet;
@@ -17,10 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-
 /**
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Pingili
+ *
  */
 public class BeanWrapperRowMapperTest {
 

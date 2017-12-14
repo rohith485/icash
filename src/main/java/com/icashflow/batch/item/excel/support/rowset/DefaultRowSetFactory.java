@@ -22,8 +22,7 @@ import com.icashflow.batch.item.excel.Sheet;
  * {@code DefaultRowSetMetaData} instance. The latter will have the {@code ColumnNameExtractor} configured
  * on this factory set (default {@code RowNumberColumnNameExtractor}.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public class DefaultRowSetFactory implements RowSetFactory {
 

@@ -1,4 +1,4 @@
-package org.springframework.batch.item.excel;
+package com.icashflow.batch.item.excel;
 
 import static org.junit.Assert.*;
 
@@ -8,14 +8,15 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.Player;
 
+import com.icashflow.batch.item.Player;
 import com.icashflow.batch.item.excel.mapping.BeanWrapperRowMapper;
 import com.icashflow.batch.item.excel.support.rowset.DefaultRowSetFactory;
 import com.icashflow.batch.item.excel.support.rowset.StaticColumnNameExtractor;
 
 /**
- * Created by in329dei on 17-9-2014.
+ * @author Rohith Pingili
+ *
  */
 public class BeanPropertyWithStaticHeaderItemReaderTest {
 

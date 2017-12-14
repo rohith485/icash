@@ -24,8 +24,7 @@ import jxl.Cell;
 /**
  * {@link com.icashflow.batch.item.excel.Sheet} implementation for JXL.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  * @deprecated since JExcelAPI is an abandoned project (no release since 2009, with serious bugs remaining)
  */
 @Deprecated

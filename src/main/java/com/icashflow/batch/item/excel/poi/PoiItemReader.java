@@ -29,13 +29,12 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 
 /**
- * {@link org.springframework.batch.item.ItemReader} implementation which uses apache POI to read an Excel
+ * {@link com.icashflow.batch.item.ItemReader} implementation which uses apache POI to read an Excel
  * file. It will read the file sheet for sheet and row for row. It is based on
- * the {@link org.springframework.batch.item.file.FlatFileItemReader}
+ * the {@link com.icashflow.batch.item.file.FlatFileItemReader}
  *
  * @param <T> the type
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public class PoiItemReader<T> extends AbstractExcelItemReader<T> {
 

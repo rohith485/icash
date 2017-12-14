@@ -19,8 +19,7 @@ package com.icashflow.batch.item.excel;
 /**
  * Interface to wrap different Excel implementations like JExcel, JXL or Apache POI.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public interface Sheet {
 

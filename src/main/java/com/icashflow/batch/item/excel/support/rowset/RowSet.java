@@ -21,8 +21,7 @@ import java.util.Properties;
  * Used by the {@code com.icashflow.batch.item.excel.AbstractExcelItemReader} to abstract away
  * the complexities of the underlying Excel API implementations.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public interface RowSet {
 

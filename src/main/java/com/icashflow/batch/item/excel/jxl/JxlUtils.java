@@ -27,8 +27,7 @@ import java.util.List;
 /**
  * Class containing utility methods to work with JXL.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  * @deprecated since JExcelAPI is an abandoned project (no release since 2009, with serious bugs remaining)
  */
 @Deprecated

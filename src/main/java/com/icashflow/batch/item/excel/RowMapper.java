@@ -21,8 +21,7 @@ import com.icashflow.batch.item.excel.support.rowset.RowSet;
  * Map rows from an excel sheet to an object.
  *
  * @param <T> the type
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public interface RowMapper<T> {
 

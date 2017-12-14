@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.item.excel.poi;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.batch.item.excel.AbstractExcelItemReaderTests;
+package com.icashflow.batch.item.excel.jxl;
 
 import com.icashflow.batch.item.excel.AbstractExcelItemReader;
-import com.icashflow.batch.item.excel.poi.PoiItemReader;
+import com.icashflow.batch.item.excel.AbstractExcelItemReaderTests;
+import com.icashflow.batch.item.excel.jxl.JxlItemReader;
 
-public class PoiItemReaderXlsTest extends AbstractExcelItemReaderTests {
+/**
+ * Test
+ */
+public class JxlItemReaderTest extends AbstractExcelItemReaderTests {
 
     @Override
     public AbstractExcelItemReader createExcelItemReader() {
-        return new PoiItemReader();
+        return new JxlItemReader();
     }
 
 }

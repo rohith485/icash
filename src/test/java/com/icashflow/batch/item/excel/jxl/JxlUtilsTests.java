@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.item.excel.jxl;
+package com.icashflow.batch.item.excel.jxl;
 
 import jxl.Cell;
 import jxl.Workbook;
@@ -27,7 +27,7 @@ import com.icashflow.batch.item.excel.jxl.JxlUtils;
 /**
  * Tests for {@link com.icashflow.batch.item.excel.jxl.JxlUtils}.
  *
- * @author Marten Deinum
+ * @author Rohith Pingili
  *
  */
 public class JxlUtilsTests {

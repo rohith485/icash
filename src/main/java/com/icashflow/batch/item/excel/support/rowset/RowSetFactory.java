@@ -20,8 +20,7 @@ import com.icashflow.batch.item.excel.Sheet;
 /**
  * Contract for factories which will construct a {@code RowSet} implementation.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public interface RowSetFactory {
 

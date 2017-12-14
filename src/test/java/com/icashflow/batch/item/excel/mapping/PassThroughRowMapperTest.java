@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.item.excel.mapping;
+package com.icashflow.batch.item.excel.mapping;
 
 import org.junit.Test;
-import org.springframework.batch.item.excel.MockSheet;
 
+import com.icashflow.batch.item.excel.MockSheet;
 import com.icashflow.batch.item.excel.mapping.PassThroughRowMapper;
 import com.icashflow.batch.item.excel.support.rowset.DefaultRowSetFactory;
 import com.icashflow.batch.item.excel.support.rowset.RowSet;
@@ -28,9 +28,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests for {@link PassThroughRowMapper}.
+ * @author Rohith Pingili
  *
- * @author Marten Deinum
  */
 public class PassThroughRowMapperTest {
 

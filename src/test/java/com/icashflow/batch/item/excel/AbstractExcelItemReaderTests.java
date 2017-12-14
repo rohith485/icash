@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.item.excel;
+package com.icashflow.batch.item.excel;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,7 +35,7 @@ import com.icashflow.batch.item.excel.support.rowset.RowSet;
 /**
  * Base class for testing Excel based item readers.
  *
- * @author Marten Deinum
+ * @author Rohith Pingili
  */
 public abstract class AbstractExcelItemReaderTests  {
 

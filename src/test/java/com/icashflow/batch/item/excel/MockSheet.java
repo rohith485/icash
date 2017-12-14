@@ -1,4 +1,4 @@
-package org.springframework.batch.item.excel;
+package com.icashflow.batch.item.excel;
 
 import jxl.Cell;
 
@@ -10,8 +10,8 @@ import com.icashflow.batch.item.excel.jxl.JxlUtils;
 /**
  * Sheet implementation usable for testing. Works in an {@code List} of {@xode String[]}.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Pingili
+ *
  */
 public class MockSheet implements Sheet {
 

@@ -18,8 +18,7 @@ package com.icashflow.batch.item.excel.support.rowset;
 /**
  * Interface representing the the metadata associated with an Excel document.
  *
- * @author Marten Deinum
- * @since 0.5.0
+ * @author Rohith Kumar Pingili
  */
 public interface RowSetMetaData {
 

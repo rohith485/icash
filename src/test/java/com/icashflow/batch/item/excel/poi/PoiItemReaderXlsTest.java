@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.batch.item.excel.poi;
+package com.icashflow.batch.item.excel.poi;
 
-import org.springframework.batch.item.excel.AbstractExcelItemReaderTests;
-import org.springframework.core.io.ClassPathResource;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.icashflow.batch.item.excel.AbstractExcelItemReader;
+import com.icashflow.batch.item.excel.AbstractExcelItemReaderTests;
 import com.icashflow.batch.item.excel.poi.PoiItemReader;
 
-public class PoiItemReaderXlsxTest extends AbstractExcelItemReaderTests {
-
-    @Override
-    public void configureItemReader(AbstractExcelItemReader itemReader) {
-        itemReader.setResource(new ClassPathResource("org/springframework/batch/item/excel/player.xlsx"));
-    }
+public class PoiItemReaderXlsTest extends AbstractExcelItemReaderTests {
 
     @Override
     public AbstractExcelItemReader createExcelItemReader() {
         return new PoiItemReader();
     }
+
 }
