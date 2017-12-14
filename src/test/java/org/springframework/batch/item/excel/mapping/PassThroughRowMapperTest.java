@@ -17,8 +17,10 @@ package org.springframework.batch.item.excel.mapping;
 
 import org.junit.Test;
 import org.springframework.batch.item.excel.MockSheet;
-import org.springframework.batch.item.excel.support.rowset.DefaultRowSetFactory;
-import org.springframework.batch.item.excel.support.rowset.RowSet;
+
+import com.icashflow.batch.item.excel.mapping.PassThroughRowMapper;
+import com.icashflow.batch.item.excel.support.rowset.DefaultRowSetFactory;
+import com.icashflow.batch.item.excel.support.rowset.RowSet;
 
 import java.util.Collections;
 

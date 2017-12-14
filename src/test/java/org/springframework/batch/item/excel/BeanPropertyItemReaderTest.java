@@ -9,7 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.Player;
-import org.springframework.batch.item.excel.mapping.BeanWrapperRowMapper;
+
+import com.icashflow.batch.item.excel.mapping.BeanWrapperRowMapper;
 
 /**
  * Created by in329dei on 17-9-2014.

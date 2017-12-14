@@ -22,8 +22,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.icashflow.batch.item.excel.jxl.JxlUtils;
+
 /**
- * Tests for {@link org.springframework.batch.item.excel.jxl.JxlUtils}.
+ * Tests for {@link com.icashflow.batch.item.excel.jxl.JxlUtils}.
  *
  * @author Marten Deinum
  *
@@ -46,7 +48,7 @@ public class JxlUtilsTests {
     }
 
     /**
-     * Test the {@link org.springframework.batch.item.excel.jxl.JxlUtils#isEmpty( jxl.Cell)} method.
+     * Test the {@link com.icashflow.batch.item.excel.jxl.JxlUtils#isEmpty( jxl.Cell)} method.
      */
     @Test
     public void checkIfCellsAreEmpty() {

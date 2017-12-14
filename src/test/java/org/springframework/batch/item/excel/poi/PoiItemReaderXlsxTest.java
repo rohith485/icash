@@ -15,9 +15,11 @@
  */
 package org.springframework.batch.item.excel.poi;
 
-import org.springframework.batch.item.excel.AbstractExcelItemReader;
 import org.springframework.batch.item.excel.AbstractExcelItemReaderTests;
 import org.springframework.core.io.ClassPathResource;
+
+import com.icashflow.batch.item.excel.AbstractExcelItemReader;
+import com.icashflow.batch.item.excel.poi.PoiItemReader;
 
 public class PoiItemReaderXlsxTest extends AbstractExcelItemReaderTests {
 

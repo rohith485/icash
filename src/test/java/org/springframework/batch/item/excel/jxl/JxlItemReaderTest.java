@@ -16,8 +16,10 @@
 
 package org.springframework.batch.item.excel.jxl;
 
-import org.springframework.batch.item.excel.AbstractExcelItemReader;
 import org.springframework.batch.item.excel.AbstractExcelItemReaderTests;
+
+import com.icashflow.batch.item.excel.AbstractExcelItemReader;
+import com.icashflow.batch.item.excel.jxl.JxlItemReader;
 
 /**
  * Test
