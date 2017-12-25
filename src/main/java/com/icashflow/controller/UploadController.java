@@ -15,8 +15,10 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,18 +30,58 @@ import com.icashflow.batch.item.excel.Sheet;
 import com.icashflow.batch.item.excel.mapping.PassThroughRowMapper;
 import com.icashflow.batch.item.excel.poi.PoiItemReader;
 import com.icashflow.batch.item.excel.support.rowset.RowSet;
+import com.icashflow.command.BuyerIcashCommand;
 
 @Controller
 public class UploadController {
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) {
+    	BuyerIcashCommand buyerIcashCommand = new BuyerIcashCommand();
+    	model.addAttribute("buyerIcashCommand", buyerIcashCommand);
         return "upload";
     }
 
     private String dbURL = "jdbc:mysql://127.0.0.1:3306/filedb";
     private String dbUser = "root";
     private String dbPass = "admin";
+    
+    
+    @PostMapping("/updatebuyerdata")
+	public String processBuyerInput(@ModelAttribute("buyerIcashCommand") BuyerIcashCommand buyerIcashCommand, RedirectAttributes redirectAttributes) {
+		MultipartFile file = buyerIcashCommand.getFile();
+		if (file.isEmpty()) {
+			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+			return "redirect:uploadStatus";
+		}
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+			String query = " insert into UPLOADED_FILES (FILE_NAME,FILE_TYPE,FILE_DATA,"
+					+ "UPLOADED_USER_ID,UPLOADED_DATE,FILE_SIZE, FILE_STATUS,"
+					+ "MINIMUM_ROI,DESIRED_ROI)"
+					+ " values (?, ? ,? ,? ,? ,? ,? ,? ,?)";
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.setString(1, file.getOriginalFilename());
+			preparedStmt.setString(2, FilenameUtils.getExtension(file.getOriginalFilename()));
+			preparedStmt.setBytes(3, file.getBytes());
+			preparedStmt.setString(4, "ROHITH");
+			java.util.Date today = new java.util.Date();
+			preparedStmt.setDate(5, new java.sql.Date(today.getTime()));
+			preparedStmt.setLong(6, file.getSize());
+			preparedStmt.setString(7, "ACTIVE");
+			preparedStmt.setDouble(8, buyerIcashCommand.getMroi());
+			preparedStmt.setDouble(9, buyerIcashCommand.getDroi());
+			preparedStmt.execute();
+			conn.close();
+			redirectAttributes.addFlashAttribute("message",
+					"You successfully uploaded '" + file.getOriginalFilename() + "'");
+		} catch (Exception e) {
+			System.out.println("Exception occured " + e);
+		}
+
+		return "redirect:/uploadStatus";
+	}
     
     //@RequestMapping(value = "/upload", method = RequestMethod.POST)
     @PostMapping("/upload") //new annotation since 4.3
