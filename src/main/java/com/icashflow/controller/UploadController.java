@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.StringJoiner;
 
 import org.apache.commons.io.FilenameUtils;
@@ -31,6 +32,7 @@ import com.icashflow.batch.item.excel.mapping.PassThroughRowMapper;
 import com.icashflow.batch.item.excel.poi.PoiItemReader;
 import com.icashflow.batch.item.excel.support.rowset.RowSet;
 import com.icashflow.command.BuyerIcashCommand;
+import com.icashflow.command.SellerIcashCommand;
 
 @Controller
 public class UploadController {
@@ -39,6 +41,10 @@ public class UploadController {
     public String index(Model model) {
     	BuyerIcashCommand buyerIcashCommand = new BuyerIcashCommand();
     	model.addAttribute("buyerIcashCommand", buyerIcashCommand);
+    	
+    	SellerIcashCommand sellerIcashCommand = new SellerIcashCommand();
+    	model.addAttribute("sellerIcashCommand", sellerIcashCommand);
+    	
         return "upload";
     }
 
@@ -59,8 +65,8 @@ public class UploadController {
 			Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
 			String query = " insert into UPLOADED_FILES (FILE_NAME,FILE_TYPE,FILE_DATA,"
 					+ "UPLOADED_USER_ID,UPLOADED_DATE,FILE_SIZE, FILE_STATUS,"
-					+ "MINIMUM_ROI,DESIRED_ROI)"
-					+ " values (?, ? ,? ,? ,? ,? ,? ,? ,?)";
+					+ "MINIMUM_ROI,DESIRED_ROI, MINIMUM_RESERVE_AMOUNT, MAXIMUM_RESERVE_AMOUNT)"
+					+ " values (?, ? ,? ,? ,? ,? ,? ,? ,? ,? ,?)";
 			PreparedStatement preparedStmt = conn.prepareStatement(query);
 			preparedStmt.setString(1, file.getOriginalFilename());
 			preparedStmt.setString(2, FilenameUtils.getExtension(file.getOriginalFilename()));
@@ -72,10 +78,42 @@ public class UploadController {
 			preparedStmt.setString(7, "ACTIVE");
 			preparedStmt.setDouble(8, buyerIcashCommand.getMroi());
 			preparedStmt.setDouble(9, buyerIcashCommand.getDroi());
+			preparedStmt.setDouble(10, buyerIcashCommand.getMinReserveAmount());
+			preparedStmt.setDouble(11, buyerIcashCommand.getMaxReserveAmount());
 			preparedStmt.execute();
 			conn.close();
 			redirectAttributes.addFlashAttribute("message",
 					"You successfully uploaded '" + file.getOriginalFilename() + "'");
+		} catch (Exception e) {
+			System.out.println("Exception occured " + e);
+		}
+
+		return "redirect:/uploadStatus";
+	}
+    
+    @PostMapping("/updatesellerdata")
+	public String processSellerInput(@ModelAttribute("sellerIcashCommand") SellerIcashCommand sellerIcashCommand, RedirectAttributes redirectAttributes) {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+			String query = " insert into SELLER_INPUTS (SELLER_ID,MIN_DISCOUNT,MAX_DISCOUNT,UPLOADED_DATE,DESIRED_PAYMEMT_DATE)"
+					+ " values (? ,? ,? ,? ,? )";
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			preparedStmt.setString(1, sellerIcashCommand.getSellerId());
+			preparedStmt.setDouble(2, sellerIcashCommand.getMinDiscount());
+			preparedStmt.setDouble(3, sellerIcashCommand.getMaxDiscount());
+			java.util.Date today = new java.util.Date();
+			preparedStmt.setDate(4, new java.sql.Date(today.getTime()));
+			Date dt = new Date();
+			Calendar c = Calendar.getInstance(); 
+			c.setTime(dt); 
+			c.add(Calendar.DATE, 3);
+			dt = c.getTime();
+			preparedStmt.setDate(5, new java.sql.Date(dt.getTime()));
+			preparedStmt.execute();
+			conn.close();
+			redirectAttributes.addFlashAttribute("message",
+					"You successfully entered Discount details");
 		} catch (Exception e) {
 			System.out.println("Exception occured " + e);
 		}
