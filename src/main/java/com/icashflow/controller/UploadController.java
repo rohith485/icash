@@ -1,6 +1,8 @@
 package com.icashflow.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -14,6 +16,7 @@ import java.util.StringJoiner;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -34,6 +37,7 @@ import com.icashflow.batch.item.excel.poi.PoiItemReader;
 import com.icashflow.batch.item.excel.support.rowset.RowSet;
 import com.icashflow.command.BuyerIcashCommand;
 import com.icashflow.command.SellerIcashCommand;
+import com.icashflow.to.AwardsFileTO;
 
 @Controller
 public class UploadController {
@@ -61,9 +65,53 @@ public class UploadController {
 			redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
 			return "redirect:uploadStatus";
 		}
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
+		
+        try {
+        	AbstractExcelItemReader itemReader = new PoiItemReader<>();
+            itemReader.setRowMapper(new PassThroughRowMapper());
+            Resource resource = new InputStreamResource(file.getInputStream(), "File uploaded by user");
+            itemReader.setResource(resource);
+            itemReader.afterPropertiesSet();
+            ExecutionContext executionContext = new ExecutionContext();
+            itemReader.open(executionContext);
+            int numberOfSheets = itemReader.getNumberOfSheets();
+            Class.forName("com.mysql.jdbc.Driver");
 			Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+            for(int i=0 ; i< numberOfSheets; i++) {
+            	Sheet sheet = itemReader.getSheet(i);
+            	// skipping Zeroth row as it contains column names
+            	for(int j=1; j< sheet.getNumberOfRows() ; j++) {
+            		String[] row = sheet.getRow(j);
+            		if(row.length < 3) {
+            			// TODO throw exception
+            		}
+            		int sellerInvoiceId =Double.valueOf((row[0].trim())).intValue();
+            		Double invoiceAmount = Double.valueOf(row[1]);
+            		int invoiceDueDays = Double.valueOf((row[2])).intValue();
+            		String supplierName = sheet.getName().trim().replaceAll(".0", "");
+            		System.out.println(sheet.getName());
+            		
+            		String invoiceInsertQuery = " insert into INVOICE_DETAILS (SUPPLIER_INVOICE_ID,INVOICE_AMOUNT, "
+            				+ "ORIGINAL_DUE_DATE ,BUYER_KEY, SELLER_KEY, ENTRY_DATE)"
+            				+ "values(? ,? ,? ,? ,? ,?)";
+            		Date dt = new Date();
+        			Calendar c = Calendar.getInstance(); 
+        			c.setTime(dt); 
+        			c.add(Calendar.DATE, invoiceDueDays);
+        			dt = c.getTime();
+        			
+        			PreparedStatement preparedStmt = conn.prepareStatement(invoiceInsertQuery);
+        			preparedStmt.setInt(1, sellerInvoiceId);
+        			preparedStmt.setDouble(2, invoiceAmount);
+        			preparedStmt.setDate(3, new java.sql.Date(dt.getTime()));
+        			preparedStmt.setString(4, "BUYER1");
+        			preparedStmt.setString(5, sheet.getName());
+        			java.util.Date today = new java.util.Date();
+        			preparedStmt.setDate(6, new java.sql.Date(today.getTime()));
+        			preparedStmt.execute();
+        			System.out.println("Read: " + StringUtils.arrayToCommaDelimitedString(row));
+            	}
+            }
 			String query = " insert into UPLOADED_FILES (FILE_NAME,FILE_TYPE,FILE_DATA,"
 					+ "UPLOADED_USER_ID,UPLOADED_DATE,FILE_SIZE, FILE_STATUS,"
 					+ "MINIMUM_ROI,DESIRED_ROI, MINIMUM_RESERVE_AMOUNT, MAXIMUM_RESERVE_AMOUNT)"
@@ -129,7 +177,7 @@ public class UploadController {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
-			
+			AwardsFileTO awardsFileTO = new AwardsFileTO();
 			String userNameQuery = "select ICASH_LOGIN_USER_NAME from user_credentials where ICASH_LOGIN_KEY = 'BUYER1'";
 			PreparedStatement loginNamepreparedStmt = conn.prepareStatement(userNameQuery);
 			ResultSet loginResultSet = loginNamepreparedStmt.executeQuery();
@@ -138,14 +186,33 @@ public class UploadController {
 				userName = loginResultSet.getString("ICASH_LOGIN_USER_NAME");
 			}
 			
-			String query = "select * from seller_inputs where UPLOADED_DATE = ?";
-			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			String sellerInputQuery = "select * from seller_inputs where UPLOADED_DATE = ?";
+			PreparedStatement preparedStmt = conn.prepareStatement(sellerInputQuery);
 			java.util.Date today = new java.util.Date();
 			preparedStmt.setDate(1, new java.sql.Date(today.getTime()));
 			System.out.println(preparedStmt.toString());
 			ResultSet resultSet = preparedStmt.executeQuery();
 			while(resultSet.next()) {
-				
+				System.out.println(resultSet.getObject(1));
+			}
+			
+			String buyerInputQuery = "select * from uploaded_files where FILE_STATUS = 'ACTIVE' "
+					+ "AND UPLOADED_USER_ID = 'BUYER1' AND UPLOADED_DATE = ?";
+			PreparedStatement buyerPreparedStmt = conn.prepareStatement(buyerInputQuery);
+			buyerPreparedStmt.setDate(1, new java.sql.Date(today.getTime()));
+			System.out.println(buyerPreparedStmt.toString());
+			
+			ResultSet buyerResultSet = buyerPreparedStmt.executeQuery();
+			
+			while(buyerResultSet.next()) {
+				awardsFileTO.setMroi(buyerResultSet.getDouble("MINIMUM_ROI"));
+				awardsFileTO.setDroi(buyerResultSet.getDouble("DESIRED_ROI"));
+				awardsFileTO.setMinReserveAmount(buyerResultSet.getDouble("MINIMUM_RESERVE_AMOUNT"));
+				awardsFileTO.setMaxReserveAmount(buyerResultSet.getDouble("MAXIMUM_RESERVE_AMOUNT"));
+				Object file = buyerResultSet.getObject("FILE_DATA");
+				byte[] fileArray = toByteArray(file);
+				Resource resource = new ByteArrayResource(fileArray);
+				awardsFileTO.setResource(resource);
 			}
 			conn.close();
 			redirectAttributes.addFlashAttribute("message",
@@ -293,6 +360,27 @@ public class UploadController {
 
         return "redirect:/uploadStatus";
 
+    }
+    
+    public static byte[] toByteArray(Object obj) throws IOException {
+        byte[] bytes = null;
+        ByteArrayOutputStream bos = null;
+        ObjectOutputStream oos = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(bos);
+            oos.writeObject(obj);
+            oos.flush();
+            bytes = bos.toByteArray();
+        } finally {
+            if (oos != null) {
+                oos.close();
+            }
+            if (bos != null) {
+                bos.close();
+            }
+        }
+        return bytes;
     }
 
 
