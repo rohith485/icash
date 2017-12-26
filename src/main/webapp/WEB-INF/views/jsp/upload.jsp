@@ -1,8 +1,14 @@
 <%@taglib uri = "http://www.springframework.org/tags/form" prefix = "form"%>
 <html>
 <body>
-<h1>Icash Flow</h1>
+<h1 align="center">Icash Flow</h1>
 
+<table><tr>
+   <th>Buyer Screen</th>
+   <th>Seller Screen</th>
+ </tr>
+	<tr>
+        <td>
 <form:form method="POST" action="${pageContext.request.contextPath}/updatebuyerdata" autocomplete="false"
 	modelAttribute="buyerIcashCommand" enctype="multipart/form-data">
      <table>
@@ -27,15 +33,14 @@
                <td><input type="file" name="file" /></td>
             </tr>
             <tr>
-               <td colspan = "2">
+               <td colspan = "2" align="center">
                   <input type="submit" value="Submit" />
                </td>
             </tr>
          </table>  
 </form:form>
-
-
-
+	</td>
+	<td>
 <form:form method="POST" action="${pageContext.request.contextPath}/updatesellerdata" autocomplete="false"	modelAttribute="sellerIcashCommand">
      <table>
             <tr>
@@ -55,12 +60,21 @@
                <td><form:input path = "desiredDateOfPayment" /></td>
             </tr>
             <tr>
-               <td colspan = "2">
+               <td colspan = "2" align="center">
                   <input type="submit" value="Submit" />
                </td>
             </tr>
          </table>  
 </form:form>
-
+	</td>
+	</tr>
+	<tr>
+	<td>
+		<a href="${pageContext.request.contextPath}/generateawardsfile">click here to start awards file generation process</a>
+	</td>
+	<td>
+		<a href="${pageContext.request.contextPath}/generateawardsfile">click here to download awards file</a>
+	</td>
+	</tr>
 </body>
 </html>

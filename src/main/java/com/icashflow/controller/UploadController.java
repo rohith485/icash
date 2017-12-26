@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Date;
@@ -120,6 +121,42 @@ public class UploadController {
 
 		return "redirect:/uploadStatus";
 	}
+    
+    
+    
+    @GetMapping("/generateawardsfile")
+	public String generateawardsfile(RedirectAttributes redirectAttributes) {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+			
+			String userNameQuery = "select ICASH_LOGIN_USER_NAME from user_credentials where ICASH_LOGIN_KEY = 'BUYER1'";
+			PreparedStatement loginNamepreparedStmt = conn.prepareStatement(userNameQuery);
+			ResultSet loginResultSet = loginNamepreparedStmt.executeQuery();
+			String userName = null;
+			while(loginResultSet.next()) {
+				userName = loginResultSet.getString("ICASH_LOGIN_USER_NAME");
+			}
+			
+			String query = "select * from seller_inputs where UPLOADED_DATE = ?";
+			PreparedStatement preparedStmt = conn.prepareStatement(query);
+			java.util.Date today = new java.util.Date();
+			preparedStmt.setDate(1, new java.sql.Date(today.getTime()));
+			System.out.println(preparedStmt.toString());
+			ResultSet resultSet = preparedStmt.executeQuery();
+			while(resultSet.next()) {
+				
+			}
+			conn.close();
+			redirectAttributes.addFlashAttribute("message",
+					"You successfully entered Discount details");
+		} catch (Exception e) {
+			System.out.println("Exception occured " + e);
+		}
+
+		return "redirect:/uploadStatus";
+	}
+    
     
     //@RequestMapping(value = "/upload", method = RequestMethod.POST)
     @PostMapping("/upload") //new annotation since 4.3
