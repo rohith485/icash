@@ -73,7 +73,7 @@ PRIMARY KEY (`ICASH_LOGIN_KEY`)
 );
 
 CREATE TABLE `USER_PROFILE` (
-`USER_KEY` varchar(20) NOT NULL,
+`USER_KEY` int(11) NOT NULL AUTO_INCREMENT,
 `USER_ROLE_KEY` varchar(20) NOT NULL,
 `FIRST_NAME` varchar(40) NOT NULL,
 `LAST_NAME` varchar(40),
@@ -98,4 +98,62 @@ FOREIGN KEY (ICASH_LOGIN_KEY) REFERENCES USER_CREDENTIALS(ICASH_LOGIN_KEY)
 
 ALTER TABLE uploaded_files 
 ADD COLUMN MINIMUM_ROI DOUBLE AFTER FILE_DATA,
-ADD COLUMN DESIRED_ROI DOUBLE AFTER MINIMUM_ROI;
+ADD COLUMN DESIRED_ROI DOUBLE AFTER MINIMUM_ROI,
+ADD COLUMN MINIMUM_RESERVE_AMOUNT DOUBLE AFTER DESIRED_ROI,
+ADD COLUMN MAXIMUM_RESERVE_AMOUNT DOUBLE AFTER MINIMUM_RESERVE_AMOUNT;
+
+select * from uploaded_files;
+
+CREATE TABLE `SELLER_INPUTS` (
+  `INPUT_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `SELLER_ID` varchar(20) NOT NULL,
+  `MIN_DISCOUNT` double NOT NULL,
+  `MAX_DISCOUNT` double NOT NULL,
+  `DESIRED_PAYMEMT_DATE` DATE NOT NULL,
+  `UPLOADED_DATE` DATE NOT NULL,
+  `ADMIN_COMMENTS` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`INPUT_ID`),
+  FOREIGN KEY (SELLER_ID) REFERENCES user_credentials(ICASH_LOGIN_KEY),
+);
+
+
+insert into user_role values ("ROLE001","ADMIN","Role for Admin access");
+insert into user_role values ("ROLE002","BUYER","Role for BUYER access");
+insert into user_role values ("ROLE003","SELLER","Role for SELLER access");
+
+
+insert into user_credentials values("ROHITH485","ROHITH485","password",sysdate(),sysdate());
+insert into user_credentials values("BUYER1","BUYER1","password",sysdate(),sysdate());
+insert into user_credentials values("SELLER1","SELLER1","password",sysdate(),sysdate());
+insert into user_credentials values("SELLER2","SELLER2","password",sysdate(),sysdate());
+insert into user_credentials values("SELLER3","SELLER3","password",sysdate(),sysdate());
+insert into user_credentials values("SELLER4","SELLER4","password",sysdate(),sysdate());
+insert into user_credentials values("SELLER5","SELLER5","password",sysdate(),sysdate());
+
+
+
+insert into user_profile values("10001","ROLE001","ROHITH","PINGILI","MIYAPUR","HYDERABAD","INDIA","HYDERABAD","TELANGANA","TELANGANA","INDIA","ROHITH485@gmail.com","","","ROHITH485",sysdate(),sysdate());
+insert into user_profile values("10002","ROLE002","BUYER FN","BUYER LN","MIYAPUR","HYDERABAD","INDIA","HYDERABAD","TELANGANA","TELANGANA","INDIA","BUYER@gmail.com","","","BUYER1",sysdate(),sysdate());
+insert into user_profile values("10003","ROLE003","SELLER1","SELLER1","SELLER1","HYDERABAD","INDIA","HYDERABAD","TELANGANA","TELANGANA","INDIA","SELLER1@gmail.com","","","SELLER1",sysdate(),sysdate());
+insert into user_profile values("10004","ROLE003","SELLER2","SELLER2","MIYAPUR","HYDERABAD","INDIA","HYDERABAD","TELANGANA","TELANGANA","INDIA","SELLER2@gmail.com","","","SELLER2",sysdate(),sysdate());
+insert into user_profile values("10005","ROLE003","SELLER3","SELLER3","MIYAPUR","HYDERABAD","INDIA","HYDERABAD","TELANGANA","TELANGANA","INDIA","SELLER3@gmail.com","","","SELLER3",sysdate(),sysdate());
+insert into user_profile values("10006","ROLE003","SELLER4","PINGILI","MIYAPUR","HYDERABAD","INDIA","HYDERABAD","TELANGANA","TELANGANA","INDIA","SELLER4@gmail.com","","","SELLER4",sysdate(),sysdate());
+insert into user_profile values("10007","ROLE003","SELLER5","PINGILI","MIYAPUR","HYDERABAD","INDIA","HYDERABAD","TELANGANA","TELANGANA","INDIA","SELLER5@gmail.com","","","SELLER5",sysdate(),sysdate());
+
+
+CREATE TABLE `INVOICE_DETAILS` (
+  `ICASH_INVOICE_ID` int(11) NOT NULL AUTO_INCREMENT,
+  `SUPPLIER_INVOICE_ID` int(11) NOT NULL,
+  `DESCRIPTION` varchar(100),
+  `ORIGINAL_DUE_DATE` DATE,
+  `INVOICE_DATE` DATE,
+  `INVOICE_AMOUNT` double NOT NULL,
+  `ENTRY_DATE` DATETIME NOT NULL default  CURRENT_TIMESTAMP,
+  `MODIFIED_DATE` DATETIME NOT NULL default  CURRENT_TIMESTAMP,
+  `BUYER_KEY` varchar(20) NOT NULL,
+  `SELLER_KEY` varchar(20) NOT NULL,
+  PRIMARY KEY (`ICASH_INVOICE_ID`),
+  FOREIGN KEY (`BUYER_KEY`) REFERENCES user_credentials(`ICASH_LOGIN_KEY`),
+  FOREIGN KEY (`SELLER_KEY`) REFERENCES user_credentials(`ICASH_LOGIN_KEY`)
+);
+
