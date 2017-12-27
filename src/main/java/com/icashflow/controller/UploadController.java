@@ -10,13 +10,17 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -38,6 +42,8 @@ import com.icashflow.batch.item.excel.support.rowset.RowSet;
 import com.icashflow.command.BuyerIcashCommand;
 import com.icashflow.command.SellerIcashCommand;
 import com.icashflow.to.AwardsFileTO;
+import com.icashflow.to.InvoiceDetails;
+import com.icashflow.to.SellerInputDetails;
 
 @Controller
 public class UploadController {
@@ -186,20 +192,65 @@ public class UploadController {
 				userName = loginResultSet.getString("ICASH_LOGIN_USER_NAME");
 			}
 			
-			String sellerInputQuery = "select * from seller_inputs where UPLOADED_DATE = ?";
-			PreparedStatement preparedStmt = conn.prepareStatement(sellerInputQuery);
+			
+			String invoiceDetailsQuery = "select SUPPLIER_INVOICE_ID,ORIGINAL_DUE_DATE,INVOICE_DATE,INVOICE_AMOUNT,ENTRY_DATE,BUYER_KEY,SELLER_KEY from INVOICE_DETAILS where ENTRY_DATE = '2017-12-26 00:00:00';";
+			PreparedStatement invoiceDetailsPrepareStmt = conn.prepareStatement(invoiceDetailsQuery);
 			java.util.Date today = new java.util.Date();
-			preparedStmt.setDate(1, new java.sql.Date(today.getTime()));
-			System.out.println(preparedStmt.toString());
-			ResultSet resultSet = preparedStmt.executeQuery();
-			while(resultSet.next()) {
-				System.out.println(resultSet.getObject(1));
+			//invoiceDetailsPrepareStmt.setDate(1, new java.sql.Date(today.getTime()));
+			System.out.println(invoiceDetailsPrepareStmt.toString());
+			ResultSet invoiceResultSet = invoiceDetailsPrepareStmt.executeQuery();
+			List<InvoiceDetails> invoiceDetailsList = new ArrayList<>();
+			while(invoiceResultSet.next()) {
+				InvoiceDetails invoiceDetails = new InvoiceDetails();
+				invoiceDetails.setBuyerKey(invoiceResultSet.getString("BUYER_KEY"));
+				invoiceDetails.setEntryDate(invoiceResultSet.getDate("ENTRY_DATE"));
+				invoiceDetails.setInvoiceAmount(invoiceResultSet.getDouble("INVOICE_AMOUNT"));
+				invoiceDetails.setInvoiceDate(invoiceResultSet.getDate("INVOICE_DATE"));
+				invoiceDetails.setOriginalDueDate(invoiceResultSet.getDate("ORIGINAL_DUE_DATE"));
+				invoiceDetails.setSellerKey(invoiceResultSet.getString("SELLER_KEY"));
+				invoiceDetails.setSupplierInvoceId(invoiceResultSet.getInt("SUPPLIER_INVOICE_ID"));
+				long difference = invoiceDetails.getOriginalDueDate().getTime() - today.getTime();
+				float daysBetween = (difference / (1000 * 60 * 60 * 24));
+				invoiceDetails.setInvoiceDueDays(Float.valueOf(daysBetween).intValue());
+				invoiceDetailsList.add(invoiceDetails);
 			}
 			
+			Map<String, List<InvoiceDetails>> suppliersInvoiceMap = invoiceDetailsList.stream().collect(Collectors.groupingBy(InvoiceDetails::getSellerKey));
+			
+			
+			
+			for(Entry<String, List<InvoiceDetails>> supplierInvoice: suppliersInvoiceMap.entrySet()) {
+				
+				supplierInvoice.getKey();
+				
+				supplierInvoice.getValue();
+				
+			}
+			
+			
+			
+			System.out.println(suppliersInvoiceMap);
+			
+			String sellerInputQuery = "select * from seller_inputs where UPLOADED_DATE = '2017-12-26 00:00:00'";
+			PreparedStatement preparedStmt = conn.prepareStatement(sellerInputQuery);
+			//preparedStmt.setDate(1, new java.sql.Date(today.getTime()));
+			System.out.println(preparedStmt.toString());
+			ResultSet resultSet = preparedStmt.executeQuery();
+			List<SellerInputDetails> sellerInputDetailsList = new ArrayList<>();
+			while(resultSet.next()) {
+				SellerInputDetails sellerInputDetails = new SellerInputDetails();
+				sellerInputDetailsList.add(sellerInputDetails);
+				sellerInputDetails.setMinDiscount(resultSet.getDouble("MIN_DISCOUNT"));
+				sellerInputDetails.setMaxDiscount(resultSet.getDouble("MAX_DISCOUNT"));
+				resultSet.getString("SELLER_ID");
+			}
+			
+			System.out.println(sellerInputDetailsList);
+			
 			String buyerInputQuery = "select * from uploaded_files where FILE_STATUS = 'ACTIVE' "
-					+ "AND UPLOADED_USER_ID = 'BUYER1' AND UPLOADED_DATE = ?";
+					+ "AND UPLOADED_USER_ID = 'BUYER1' AND UPLOADED_DATE = '2017-12-26 00:00:00'";
 			PreparedStatement buyerPreparedStmt = conn.prepareStatement(buyerInputQuery);
-			buyerPreparedStmt.setDate(1, new java.sql.Date(today.getTime()));
+			//buyerPreparedStmt.setDate(1, new java.sql.Date(today.getTime()));
 			System.out.println(buyerPreparedStmt.toString());
 			
 			ResultSet buyerResultSet = buyerPreparedStmt.executeQuery();
@@ -209,15 +260,16 @@ public class UploadController {
 				awardsFileTO.setDroi(buyerResultSet.getDouble("DESIRED_ROI"));
 				awardsFileTO.setMinReserveAmount(buyerResultSet.getDouble("MINIMUM_RESERVE_AMOUNT"));
 				awardsFileTO.setMaxReserveAmount(buyerResultSet.getDouble("MAXIMUM_RESERVE_AMOUNT"));
-				Object file = buyerResultSet.getObject("FILE_DATA");
-				byte[] fileArray = toByteArray(file);
-				Resource resource = new ByteArrayResource(fileArray);
-				awardsFileTO.setResource(resource);
 			}
+			
+			
+			
+			
 			conn.close();
 			redirectAttributes.addFlashAttribute("message",
 					"You successfully entered Discount details");
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Exception occured " + e);
 		}
 
