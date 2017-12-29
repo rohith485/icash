@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import com.icashflow.command.BuyerIcashCommand;
 import com.icashflow.command.SellerIcashCommand;
 import com.icashflow.to.AwardsFileTO;
 import com.icashflow.to.InvoiceDetails;
+import com.icashflow.to.InvoiceDiscountDetails;
 import com.icashflow.to.SellerInputDetails;
 
 @Controller
@@ -215,11 +217,11 @@ public class UploadController {
 				invoiceDetailsList.add(invoiceDetails);
 			}
 			
-			Map<String, List<InvoiceDetails>> suppliersInvoiceMap = invoiceDetailsList.stream().collect(Collectors.groupingBy(InvoiceDetails::getSellerKey));
+			Map<String, List<InvoiceDetails>> allSuppliersInvoiceMap = invoiceDetailsList.stream().collect(Collectors.groupingBy(InvoiceDetails::getSellerKey));
 			
 			
 			
-			for(Entry<String, List<InvoiceDetails>> supplierInvoice: suppliersInvoiceMap.entrySet()) {
+			for(Entry<String, List<InvoiceDetails>> supplierInvoice: allSuppliersInvoiceMap.entrySet()) {
 				
 				supplierInvoice.getKey();
 				
@@ -229,23 +231,7 @@ public class UploadController {
 			
 			
 			
-			System.out.println(suppliersInvoiceMap);
-			
-			String sellerInputQuery = "select * from seller_inputs where UPLOADED_DATE = '2017-12-26 00:00:00'";
-			PreparedStatement preparedStmt = conn.prepareStatement(sellerInputQuery);
-			//preparedStmt.setDate(1, new java.sql.Date(today.getTime()));
-			System.out.println(preparedStmt.toString());
-			ResultSet resultSet = preparedStmt.executeQuery();
-			List<SellerInputDetails> sellerInputDetailsList = new ArrayList<>();
-			while(resultSet.next()) {
-				SellerInputDetails sellerInputDetails = new SellerInputDetails();
-				sellerInputDetailsList.add(sellerInputDetails);
-				sellerInputDetails.setMinDiscount(resultSet.getDouble("MIN_DISCOUNT"));
-				sellerInputDetails.setMaxDiscount(resultSet.getDouble("MAX_DISCOUNT"));
-				resultSet.getString("SELLER_ID");
-			}
-			
-			System.out.println(sellerInputDetailsList);
+			System.out.println(allSuppliersInvoiceMap);
 			
 			String buyerInputQuery = "select * from uploaded_files where FILE_STATUS = 'ACTIVE' "
 					+ "AND UPLOADED_USER_ID = 'BUYER1' AND UPLOADED_DATE = '2017-12-26 00:00:00'";
@@ -254,17 +240,85 @@ public class UploadController {
 			System.out.println(buyerPreparedStmt.toString());
 			
 			ResultSet buyerResultSet = buyerPreparedStmt.executeQuery();
+			double mroi = 0.0d;;
+			double droi = 0.0d;
+			double miam = 0.0d;
+			double maam = 0.0d;
 			
 			while(buyerResultSet.next()) {
-				awardsFileTO.setMroi(buyerResultSet.getDouble("MINIMUM_ROI"));
-				awardsFileTO.setDroi(buyerResultSet.getDouble("DESIRED_ROI"));
-				awardsFileTO.setMinReserveAmount(buyerResultSet.getDouble("MINIMUM_RESERVE_AMOUNT"));
-				awardsFileTO.setMaxReserveAmount(buyerResultSet.getDouble("MAXIMUM_RESERVE_AMOUNT"));
+				mroi = buyerResultSet.getDouble("MINIMUM_ROI");
+				droi = buyerResultSet.getDouble("DESIRED_ROI");
+				miam = buyerResultSet.getDouble("MINIMUM_RESERVE_AMOUNT");
+				maam = buyerResultSet.getDouble("MAXIMUM_RESERVE_AMOUNT");
+				
+				awardsFileTO.setMroi(mroi);
+				awardsFileTO.setDroi(droi);
+				awardsFileTO.setMinReserveAmount(miam);
+				awardsFileTO.setMaxReserveAmount(maam);
 			}
 			
+			String sellerInputQuery = "select * from seller_inputs where UPLOADED_DATE = '2017-12-26 00:00:00'";
+			PreparedStatement preparedStmt = conn.prepareStatement(sellerInputQuery);
+			//preparedStmt.setDate(1, new java.sql.Date(today.getTime()));
+			System.out.println(preparedStmt.toString());
+			ResultSet resultSet = preparedStmt.executeQuery();
 			
+			List<InvoiceDiscountDetails> eligibleInvoiceList = new ArrayList<>();
+			while(resultSet.next()) {
+				double maxSellerDisc = resultSet.getDouble("MAX_DISCOUNT");
+				if(maxSellerDisc < mroi) {
+					continue;
+				}
+				InvoiceDiscountDetails invoiceDiscountDetails = new InvoiceDiscountDetails();
+				eligibleInvoiceList.add(invoiceDiscountDetails);
+				invoiceDiscountDetails.setMinimunDiscount(resultSet.getDouble("MIN_DISCOUNT"));
+				invoiceDiscountDetails.setMaximumDiscount(resultSet.getDouble("MAX_DISCOUNT"));
+				String sellerId = resultSet.getString("SELLER_ID");
+				
+				List<InvoiceDetails> invoicesListOfSelectedSeller = allSuppliersInvoiceMap.get(sellerId);
+
+				invoicesListOfSelectedSeller.sort(new Comparator<InvoiceDetails>() {
+					@Override
+					public int compare(InvoiceDetails o1, InvoiceDetails o2) {
+						return o2.getInvoiceDueDays() - o1.getInvoiceDueDays();
+					}
+				});
+				
+				invoiceDiscountDetails.getFilteredInvoicesList().addAll(invoicesListOfSelectedSeller);
+				
+			}
 			
+			System.out.println(eligibleInvoiceList);
 			
+			eligibleInvoiceList.sort(new Comparator<InvoiceDiscountDetails>() {
+				@Override
+				public int compare(InvoiceDiscountDetails o1, InvoiceDiscountDetails o2) {
+					return Double.compare(o2.getMinimunDiscount(), o1.getMaximumDiscount());
+				}
+			});
+			
+			double totalAmountToBePaid = 0.0d;
+			//Loop for each seller
+			for( int i=0 ; i < eligibleInvoiceList.size() ; i++ ) {
+				InvoiceDiscountDetails invoiceDiscDetails = eligibleInvoiceList.get(i);
+				for( int j=0 ; j < invoiceDiscDetails.getFilteredInvoicesList().size() ; j++ ) {
+					InvoiceDetails invoiceDetails = invoiceDiscDetails.getFilteredInvoicesList().get(j);
+					double discountAmount = invoiceDiscDetails.getMinimunDiscount() * (invoiceDetails.getInvoiceDueDays() / 365 ) * invoiceDetails.getInvoiceAmount();
+					double amoutToBePaidAfterDiscounting = invoiceDetails.getInvoiceAmount() - discountAmount;
+					
+					totalAmountToBePaid = totalAmountToBePaid + amoutToBePaidAfterDiscounting;
+					
+					if(totalAmountToBePaid < awardsFileTO.getMaxReserveAmount()) {
+						invoiceDetails.setEligibleForFinalDiscounting(true);
+					}
+				}
+			}
+			
+			System.out.println(eligibleInvoiceList);
+			
+			System.out.println("totalAmountToBePaid - " + totalAmountToBePaid);
+
+			System.out.println("awardsFileTO.getMaxReserveAmount() - " + awardsFileTO.getMaxReserveAmount());
 			conn.close();
 			redirectAttributes.addFlashAttribute("message",
 					"You successfully entered Discount details");

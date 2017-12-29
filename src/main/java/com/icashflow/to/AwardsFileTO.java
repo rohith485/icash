@@ -1,6 +1,7 @@
 package com.icashflow.to;
 
-import org.springframework.core.io.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Rohith Pingili
@@ -10,12 +11,12 @@ public class AwardsFileTO {
 	private double minDiscount;
 	private double maxDiscount;
 	private String desiredDateOfPayment;
-	private String sellerId;
 	private double mroi;
 	private double droi;
 	private double minReserveAmount;
 	private double maxReserveAmount;
-	private Resource resource;
+	
+	private List<InvoiceDiscountDetails> invoiceDiscountDetailsList;
 	
 	/**
 	 * @return the minDiscount
@@ -52,18 +53,6 @@ public class AwardsFileTO {
 	 */
 	public void setDesiredDateOfPayment(String desiredDateOfPayment) {
 		this.desiredDateOfPayment = desiredDateOfPayment;
-	}
-	/**
-	 * @return the sellerId
-	 */
-	public String getSellerId() {
-		return sellerId;
-	}
-	/**
-	 * @param sellerId the sellerId to set
-	 */
-	public void setSellerId(String sellerId) {
-		this.sellerId = sellerId;
 	}
 	/**
 	 * @return the mroi
@@ -114,16 +103,14 @@ public class AwardsFileTO {
 		this.maxReserveAmount = maxReserveAmount;
 	}
 	/**
-	 * @return the resource
+	 * @return the invoiceDiscountDetailsList
 	 */
-	public Resource getResource() {
-		return resource;
+	public List<InvoiceDiscountDetails> getInvoiceDiscountDetailsList() {
+		if(null == invoiceDiscountDetailsList) {
+			invoiceDiscountDetailsList = new ArrayList<>();
+		}
+		return invoiceDiscountDetailsList;
 	}
-	/**
-	 * @param resource the resource to set
-	 */
-	public void setResource(Resource resource) {
-		this.resource = resource;
-	}
-
+	
+	
 }

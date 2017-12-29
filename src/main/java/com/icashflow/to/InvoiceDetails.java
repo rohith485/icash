@@ -17,6 +17,9 @@ public class InvoiceDetails {
 	private String sellerKey;
 	private int invoiceDueDays;
 	
+	private double discountedAmount;
+	private boolean isEligibleForFinalDiscounting;
+	private double amoutToBePaidAfterDiscounting;
 	/**
 	 * @return the supplierInvoceId
 	 */
@@ -113,6 +116,42 @@ public class InvoiceDetails {
 	public void setInvoiceDueDays(int invoiceDueDays) {
 		this.invoiceDueDays = invoiceDueDays;
 	}
+	/**
+	 * @return the discountedAmount
+	 */
+	public double getDiscountedAmount() {
+		return discountedAmount;
+	}
+	/**
+	 * @param discountedAmount the discountedAmount to set
+	 */
+	public void setDiscountedAmount(double discountedAmount) {
+		this.discountedAmount = discountedAmount;
+	}
+	/**
+	 * @return the isEligibleForFinalDiscounting
+	 */
+	public boolean isEligibleForFinalDiscounting() {
+		return isEligibleForFinalDiscounting;
+	}
+	/**
+	 * @param isEligibleForFinalDiscounting the isEligibleForFinalDiscounting to set
+	 */
+	public void setEligibleForFinalDiscounting(boolean isEligibleForFinalDiscounting) {
+		this.isEligibleForFinalDiscounting = isEligibleForFinalDiscounting;
+	}
+	/**
+	 * @return the amoutToBePaidAfterDiscounting
+	 */
+	public double getAmoutToBePaidAfterDiscounting() {
+		return amoutToBePaidAfterDiscounting;
+	}
+	/**
+	 * @param amoutToBePaidAfterDiscounting the amoutToBePaidAfterDiscounting to set
+	 */
+	public void setAmoutToBePaidAfterDiscounting(double amoutToBePaidAfterDiscounting) {
+		this.amoutToBePaidAfterDiscounting = amoutToBePaidAfterDiscounting;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -120,7 +159,10 @@ public class InvoiceDetails {
 	public String toString() {
 		return "InvoiceDetails [supplierInvoceId=" + supplierInvoceId + ", originalDueDate=" + originalDueDate
 				+ ", invoiceDate=" + invoiceDate + ", invoiceAmount=" + invoiceAmount + ", entryDate=" + entryDate
-				+ ", buyerKey=" + buyerKey + ", sellerKey=" + sellerKey + ", invoiceDueDays=" + invoiceDueDays + "]";
+				+ ", buyerKey=" + buyerKey + ", sellerKey=" + sellerKey + ", invoiceDueDays=" + invoiceDueDays
+				+ ", discountedAmount=" + discountedAmount + ", isEligibleForFinalDiscounting="
+				+ isEligibleForFinalDiscounting + ", amoutToBePaidAfterDiscounting=" + amoutToBePaidAfterDiscounting
+				+ "]";
 	}
 
 }
