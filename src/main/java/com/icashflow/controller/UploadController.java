@@ -3,6 +3,7 @@ package com.icashflow.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -45,7 +46,6 @@ import com.icashflow.command.SellerIcashCommand;
 import com.icashflow.to.AwardsFileTO;
 import com.icashflow.to.InvoiceDetails;
 import com.icashflow.to.InvoiceDiscountDetails;
-import com.icashflow.to.SellerInputDetails;
 
 @Controller
 public class UploadController {
@@ -297,22 +297,50 @@ public class UploadController {
 				}
 			});
 			
-			double totalAmountToBePaid = 0.0d;
+			float totalAmountToBePaid = 0.0f;
+			boolean terminateLoop = false;
+			int invoiceRow = 0;
+			//int tempIndex = 0;
 			//Loop for each seller
-			for( int i=0 ; i < eligibleInvoiceList.size() ; i++ ) {
-				InvoiceDiscountDetails invoiceDiscDetails = eligibleInvoiceList.get(i);
-				for( int j=0 ; j < invoiceDiscDetails.getFilteredInvoicesList().size() ; j++ ) {
-					InvoiceDetails invoiceDetails = invoiceDiscDetails.getFilteredInvoicesList().get(j);
-					double discountAmount = invoiceDiscDetails.getMinimunDiscount() * (invoiceDetails.getInvoiceDueDays() / 365 ) * invoiceDetails.getInvoiceAmount();
-					double amoutToBePaidAfterDiscounting = invoiceDetails.getInvoiceAmount() - discountAmount;
+			for(int tempIndex = 0 ; tempIndex < eligibleInvoiceList.size() ;) {
+				InvoiceDiscountDetails invoiceDiscDetails = eligibleInvoiceList.get(tempIndex);
+				for( int j=0 ; j < invoiceDiscDetails.getFilteredInvoicesList().size() 
+						&& invoiceRow < invoiceDiscDetails.getFilteredInvoicesList().size(); j++ ) {
+					InvoiceDetails invoiceDetails = invoiceDiscDetails.getFilteredInvoicesList().get(invoiceRow);
+					float days = (float)(invoiceDetails.getInvoiceDueDays()+4) / (float)365;
+					float discountAmount = (float)invoiceDiscDetails.getMinimunDiscount() * 
+							days * (float)invoiceDetails.getInvoiceAmount();
+					float amoutToBePaidAfterDiscounting = (float)invoiceDetails.getInvoiceAmount() - discountAmount;
+					float tempTotalAmount = totalAmountToBePaid + amoutToBePaidAfterDiscounting;
 					
-					totalAmountToBePaid = totalAmountToBePaid + amoutToBePaidAfterDiscounting;
-					
-					if(totalAmountToBePaid < awardsFileTO.getMaxReserveAmount()) {
+					if(tempTotalAmount < (float)awardsFileTO.getMaxReserveAmount()) {
+						totalAmountToBePaid = tempTotalAmount;
 						invoiceDetails.setEligibleForFinalDiscounting(true);
+						invoiceDetails.setDiscountedAmount(discountAmount);
+						invoiceDetails.setAmoutToBePaidAfterDiscounting(amoutToBePaidAfterDiscounting);
+					}else {
+						terminateLoop = true;
 					}
+					break;
+				}
+				System.out.println("value of i :" + tempIndex + " total size " + " invoiceDiscDetails.size() "+ eligibleInvoiceList.size());
+				if( tempIndex == eligibleInvoiceList.size() -1 ) {
+					invoiceRow = invoiceRow + 1;
+					tempIndex=0;
+				}else {
+					tempIndex = tempIndex + 1;
+				}
+				if(terminateLoop) {
+					break;
 				}
 			}
+			System.out.println("---------------------------------------------------------------");
+			System.out.println(totalAmountToBePaid);
+			System.out.println(BigDecimal.valueOf(totalAmountToBePaid).toPlainString());
+			System.out.println(BigDecimal.valueOf(totalAmountToBePaid).toBigInteger());
+			System.out.println(BigDecimal.valueOf(totalAmountToBePaid).doubleValue());
+			System.out.println(BigDecimal.valueOf(totalAmountToBePaid).longValue());
+			System.out.println("---------------------------------------------------------------");
 			
 			System.out.println(eligibleInvoiceList);
 			
