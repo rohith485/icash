@@ -1,6 +1,7 @@
 package com.icashflow.controller;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
@@ -22,6 +23,10 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -264,13 +269,10 @@ public class UploadController {
 			ResultSet resultSet = preparedStmt.executeQuery();
 			
 			List<InvoiceDiscountDetails> eligibleInvoiceList = new ArrayList<>();
+			List<InvoiceDiscountDetails> inEligibleInvoiceList = new ArrayList<>();
 			while(resultSet.next()) {
 				double maxSellerDisc = resultSet.getDouble("MAX_DISCOUNT");
-				if(maxSellerDisc < mroi) {
-					continue;
-				}
 				InvoiceDiscountDetails invoiceDiscountDetails = new InvoiceDiscountDetails();
-				eligibleInvoiceList.add(invoiceDiscountDetails);
 				invoiceDiscountDetails.setMinimunDiscount(resultSet.getDouble("MIN_DISCOUNT"));
 				invoiceDiscountDetails.setMaximumDiscount(resultSet.getDouble("MAX_DISCOUNT"));
 				String sellerId = resultSet.getString("SELLER_ID");
@@ -285,6 +287,12 @@ public class UploadController {
 				});
 				
 				invoiceDiscountDetails.getFilteredInvoicesList().addAll(invoicesListOfSelectedSeller);
+				
+				if(maxSellerDisc < mroi) {
+					inEligibleInvoiceList.add(invoiceDiscountDetails);
+				}else {
+					eligibleInvoiceList.add(invoiceDiscountDetails);
+				}
 				
 			}
 			
@@ -307,7 +315,7 @@ public class UploadController {
 				for( int j=0 ; j < invoiceDiscDetails.getFilteredInvoicesList().size() 
 						&& invoiceRow < invoiceDiscDetails.getFilteredInvoicesList().size(); j++ ) {
 					InvoiceDetails invoiceDetails = invoiceDiscDetails.getFilteredInvoicesList().get(invoiceRow);
-					float days = (float)(invoiceDetails.getInvoiceDueDays()+4) / (float)365;
+					float days = (float)(invoiceDetails.getInvoiceDueDays()+5) / (float)365;
 					float discountAmount = (float)invoiceDiscDetails.getMinimunDiscount() * 
 							days * (float)invoiceDetails.getInvoiceAmount();
 					float amoutToBePaidAfterDiscounting = (float)invoiceDetails.getInvoiceAmount() - discountAmount;
@@ -318,6 +326,8 @@ public class UploadController {
 						invoiceDetails.setEligibleForFinalDiscounting(true);
 						invoiceDetails.setDiscountedAmount(discountAmount);
 						invoiceDetails.setAmoutToBePaidAfterDiscounting(amoutToBePaidAfterDiscounting);
+						invoiceDetails.setIcashComission(discountAmount * 0.15f);
+						invoiceDetails.setApr((discountAmount/(float)invoiceDetails.getInvoiceAmount()) * (365/invoiceDetails.getInvoiceDueDays()) );
 					}else {
 						terminateLoop = true;
 					}
@@ -347,10 +357,17 @@ public class UploadController {
 			System.out.println("totalAmountToBePaid - " + totalAmountToBePaid);
 
 			System.out.println("awardsFileTO.getMaxReserveAmount() - " + awardsFileTO.getMaxReserveAmount());
+			
+			
+			prepareAwardsFile(eligibleInvoiceList, inEligibleInvoiceList);
+			
+			
 			conn.close();
 			redirectAttributes.addFlashAttribute("message",
-					"You successfully entered Discount details");
+					"You File is ready @ F:\\Freelancing\\Documents - please verify");
 		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("message",
+					"Failed to prepare file");
 			e.printStackTrace();
 			System.out.println("Exception occured " + e);
 		}
@@ -359,7 +376,126 @@ public class UploadController {
 	}
     
     
-    //@RequestMapping(value = "/upload", method = RequestMethod.POST)
+    /**
+     * @param eligibleInvoiceList
+     * @param inEligibleInvoiceList
+     */
+    private void prepareAwardsFile(List<InvoiceDiscountDetails> eligibleInvoiceList,
+			List<InvoiceDiscountDetails> inEligibleInvoiceList)  throws IOException {
+    	
+    	XSSFWorkbook workbook = new XSSFWorkbook(); 
+    	// creating a blank sheet
+        XSSFSheet awardssheet = workbook.createSheet("awardssheet");
+        int rownum = 0;
+        
+        for (InvoiceDiscountDetails invoiceDiscountDetails : eligibleInvoiceList)
+           {
+           int updatedRownum = createList(invoiceDiscountDetails, awardssheet, rownum);
+           rownum = updatedRownum;
+               
+       } 
+        
+        for (InvoiceDiscountDetails invoiceDiscountDetails : inEligibleInvoiceList)
+        {
+        	int updatedRownum = createList(invoiceDiscountDetails, awardssheet, rownum);
+        
+        rownum = updatedRownum;
+            
+    } 
+        for(int i = 0 ; i < 10 ; i ++) {
+        	awardssheet.autoSizeColumn(i);
+        }
+        FileOutputStream fileOut = new FileOutputStream("F:\\Freelancing\\Documents\\awardssheet.xls");
+        workbook.write(fileOut);
+        fileOut.close();
+    }
+    
+	private static int createList(InvoiceDiscountDetails invoiceDiscountDetails, XSSFSheet awardssheet, int rownum) {
+		float totalInvoicesAmtPerSupplier = 0.0f;
+		float eligibleInvoicesAmtPerSupplier = 0.0f;
+		float combinedDiscount = 0.0f;
+		float amountTobePaidForClearedInvoice = 0.0f;
+		Row commonRows = awardssheet.createRow(rownum++);
+			Cell cell = commonRows.createCell(1);
+			Cell cell2 = commonRows.createCell(2);
+			Cell cell3 = commonRows.createCell(3);
+			Cell cell4 = commonRows.createCell(4);
+			Cell cell5 = commonRows.createCell(5);
+			Cell cell6 = commonRows.createCell(6);
+			Cell cell7 = commonRows.createCell(7);
+			Cell cell8 = commonRows.createCell(8);
+			Cell cell9 = commonRows.createCell(9);
+				cell.setCellValue("INVOICE NUMBER");
+				cell2.setCellValue("INVOICE AMOUNT");
+				cell3.setCellValue("INVOICE DUE(In days)");
+				cell4.setCellValue("DISCOUNT AMOUNT");
+				cell5.setCellValue("AMOUNT TO BE PAID");
+				cell6.setCellValue("MIN DISCOUNT RATE");
+				cell7.setCellValue("MAX DISCOUNT RATE");
+				cell8.setCellValue("Icash comission");
+				cell9.setCellValue("APR");
+			
+		for (int i = 0; i < invoiceDiscountDetails.getFilteredInvoicesList().size(); i++) {
+			Row row = awardssheet.createRow(rownum++);
+			Cell datacell = row.createCell(1);
+			Cell dataCell2 = row.createCell(2);
+			Cell dataCell3 = row.createCell(3);
+			Cell dataCell4 = row.createCell(4);
+			Cell dataCell5 = row.createCell(5);
+			Cell dataCell6 = row.createCell(6);
+			Cell dataCell7 = row.createCell(7);
+			Cell dataCell8 = row.createCell(8);
+			Cell dataCell9 = row.createCell(9);
+			
+			InvoiceDetails filteredInvoice = invoiceDiscountDetails.getFilteredInvoicesList().get(i);
+			totalInvoicesAmtPerSupplier = totalInvoicesAmtPerSupplier + (float) filteredInvoice.getInvoiceAmount();
+			datacell.setCellValue(filteredInvoice.getSupplierInvoceId());
+			dataCell2.setCellValue((float) filteredInvoice.getInvoiceAmount());
+			dataCell3.setCellValue(filteredInvoice.getInvoiceDueDays());
+			cell.setCellValue(filteredInvoice.getSellerKey());
+			if (filteredInvoice.isEligibleForFinalDiscounting()) {
+				eligibleInvoicesAmtPerSupplier = eligibleInvoicesAmtPerSupplier
+						+ (float) filteredInvoice.getInvoiceAmount();
+				dataCell4.setCellValue((float) filteredInvoice.getDiscountedAmount());
+				dataCell5.setCellValue((float) filteredInvoice.getAmoutToBePaidAfterDiscounting());
+				amountTobePaidForClearedInvoice = amountTobePaidForClearedInvoice
+						+ (float) filteredInvoice.getAmoutToBePaidAfterDiscounting();
+				combinedDiscount = combinedDiscount + (float) filteredInvoice.getDiscountedAmount();
+				dataCell6.setCellValue((float) invoiceDiscountDetails.getMinimunDiscount());
+				dataCell7.setCellValue((float) invoiceDiscountDetails.getMaximumDiscount());
+				dataCell8.setCellValue(filteredInvoice.getIcashComission());
+				dataCell9.setCellValue(filteredInvoice.getApr());
+			} else {
+				dataCell4.setCellValue("N.A");
+				dataCell5.setCellValue("N.A");
+			}
+
+		}
+
+		Row row = awardssheet.createRow(rownum++);
+		Cell totalLabelCell = row.createCell(1);
+		totalLabelCell.setCellValue("TOTAL");
+		Cell totalValue = row.createCell(2);
+		totalValue.setCellValue(totalInvoicesAmtPerSupplier);
+		
+		
+		Row lastRow = awardssheet.createRow(rownum++);
+		Cell eligibleTotalLabelCell = lastRow.createCell(1);
+		eligibleTotalLabelCell.setCellValue("Eligible Invoices Total");
+		Cell eligibleTotalValue = lastRow.createCell(2);
+		eligibleTotalValue.setCellValue(eligibleInvoicesAmtPerSupplier);
+		
+		Cell eligibleDiscTotalValue = lastRow.createCell(4);
+		
+		eligibleDiscTotalValue.setCellValue(combinedDiscount);
+		Cell amountTotalValueAfterDisc = lastRow.createCell(5);
+		amountTotalValueAfterDisc.setCellValue(amountTobePaidForClearedInvoice);
+		awardssheet.createRow(rownum++);
+		awardssheet.createRow(rownum++);
+		return rownum;
+	}
+
+	//@RequestMapping(value = "/upload", method = RequestMethod.POST)
     @PostMapping("/upload") //new annotation since 4.3
     public String singleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
@@ -375,7 +511,7 @@ public class UploadController {
             itemReader.setLinesToSkip(1); //First line is column names
             itemReader.setRowMapper(new PassThroughRowMapper());
             itemReader.setSkippedRowsCallback(new RowCallbackHandler() {
-
+            	
                 public void handleRow(RowSet rs) {
                     System.out.println("Skipping: " + StringUtils.arrayToCommaDelimitedString(rs.getCurrentRow()));
                 }

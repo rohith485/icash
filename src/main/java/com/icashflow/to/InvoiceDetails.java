@@ -20,6 +20,10 @@ public class InvoiceDetails {
 	private double discountedAmount;
 	private boolean isEligibleForFinalDiscounting;
 	private double amoutToBePaidAfterDiscounting;
+	
+	private float icashComission;
+	private float apr;
+	
 	/**
 	 * @return the supplierInvoceId
 	 */
@@ -152,6 +156,32 @@ public class InvoiceDetails {
 	public void setAmoutToBePaidAfterDiscounting(double amoutToBePaidAfterDiscounting) {
 		this.amoutToBePaidAfterDiscounting = amoutToBePaidAfterDiscounting;
 	}
+	
+	/**
+	 * @return the icashComission
+	 */
+	public float getIcashComission() {
+		return icashComission;
+	}
+	/**
+	 * @param icashComission the icashComission to set
+	 */
+	public void setIcashComission(float icashComission) {
+		this.icashComission = icashComission;
+	}
+	
+	/**
+	 * @return the apr
+	 */
+	public float getApr() {
+		return apr;
+	}
+	/**
+	 * @param apr the apr to set
+	 */
+	public void setApr(float apr) {
+		this.apr = apr;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -162,7 +192,7 @@ public class InvoiceDetails {
 				+ ", buyerKey=" + buyerKey + ", sellerKey=" + sellerKey + ", invoiceDueDays=" + invoiceDueDays
 				+ ", discountedAmount=" + discountedAmount + ", isEligibleForFinalDiscounting="
 				+ isEligibleForFinalDiscounting + ", amoutToBePaidAfterDiscounting=" + amoutToBePaidAfterDiscounting
-				+ "]";
+				+ ", icashComission=" + icashComission + ", apr=" + apr + "]";
 	}
 
 }
