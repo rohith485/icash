@@ -2,7 +2,6 @@
 <html>
 <body>
 <h1 align="center">Icash Flow</h1>
-
 <table><tr>
    <th>Buyer Screen</th>
    <th>Seller Screen</th>

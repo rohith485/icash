@@ -9,8 +9,8 @@ import java.util.List;
  */
 public class InvoiceDiscountDetails {
 	
-	private double minimunDiscount;
-	private double maximumDiscount;
+	private float minimunDiscount;
+	private float maximumDiscount;
 	private List<InvoiceDetails> filteredInvoicesList;
 	
 	
@@ -20,25 +20,25 @@ public class InvoiceDiscountDetails {
 	/**
 	 * @return the minimunDiscount
 	 */
-	public double getMinimunDiscount() {
+	public float getMinimunDiscount() {
 		return minimunDiscount;
 	}
 	/**
 	 * @param minimunDiscount the minimunDiscount to set
 	 */
-	public void setMinimunDiscount(double minimunDiscount) {
+	public void setMinimunDiscount(float minimunDiscount) {
 		this.minimunDiscount = minimunDiscount;
 	}
 	/**
 	 * @return the maximumDiscount
 	 */
-	public double getMaximumDiscount() {
+	public float getMaximumDiscount() {
 		return maximumDiscount;
 	}
 	/**
 	 * @param maximumDiscount the maximumDiscount to set
 	 */
-	public void setMaximumDiscount(double maximumDiscount) {
+	public void setMaximumDiscount(float maximumDiscount) {
 		this.maximumDiscount = maximumDiscount;
 	}
 	/**

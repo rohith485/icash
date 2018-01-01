@@ -7,8 +7,10 @@ package com.icashflow.to;
 public class SellerInputDetails {
 	
 	private String sellerId;
-	private double minDiscount;
-	private double maxDiscount;
+	private float minDiscount;
+	private float maxDiscount;
+	private String desiredDateOfPayment;
+	
 	/**
 	 * @return the sellerId
 	 */
@@ -24,26 +26,38 @@ public class SellerInputDetails {
 	/**
 	 * @return the minDiscount
 	 */
-	public double getMinDiscount() {
+	public float getMinDiscount() {
 		return minDiscount;
 	}
 	/**
 	 * @param minDiscount the minDiscount to set
 	 */
-	public void setMinDiscount(double minDiscount) {
+	public void setMinDiscount(float minDiscount) {
 		this.minDiscount = minDiscount;
 	}
 	/**
 	 * @return the maxDiscount
 	 */
-	public double getMaxDiscount() {
+	public float getMaxDiscount() {
 		return maxDiscount;
 	}
 	/**
 	 * @param maxDiscount the maxDiscount to set
 	 */
-	public void setMaxDiscount(double maxDiscount) {
+	public void setMaxDiscount(float maxDiscount) {
 		this.maxDiscount = maxDiscount;
+	}
+	/**
+	 * @return the desiredDateOfPayment
+	 */
+	public String getDesiredDateOfPayment() {
+		return desiredDateOfPayment;
+	}
+	/**
+	 * @param desiredDateOfPayment the desiredDateOfPayment to set
+	 */
+	public void setDesiredDateOfPayment(String desiredDateOfPayment) {
+		this.desiredDateOfPayment = desiredDateOfPayment;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -51,7 +65,7 @@ public class SellerInputDetails {
 	@Override
 	public String toString() {
 		return "SellerInputDetails [sellerId=" + sellerId + ", minDiscount=" + minDiscount + ", maxDiscount="
-				+ maxDiscount + "]";
+				+ maxDiscount + ", desiredDateOfPayment=" + desiredDateOfPayment + "]";
 	}
 	
 }

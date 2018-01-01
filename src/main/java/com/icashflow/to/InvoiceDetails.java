@@ -11,15 +11,15 @@ public class InvoiceDetails {
 	private int supplierInvoceId;
 	private Date originalDueDate;
 	private Date invoiceDate;
-	private double invoiceAmount;
+	private float invoiceAmount;
 	private Date entryDate;
 	private String buyerKey;
 	private String sellerKey;
 	private int invoiceDueDays;
 	
-	private double discountedAmount;
+	private float discountedAmount;
 	private boolean isEligibleForFinalDiscounting;
-	private double amoutToBePaidAfterDiscounting;
+	private float amoutToBePaidAfterDiscounting;
 	
 	private float icashComission;
 	private float apr;
@@ -63,13 +63,13 @@ public class InvoiceDetails {
 	/**
 	 * @return the invoiceAmount
 	 */
-	public double getInvoiceAmount() {
+	public float getInvoiceAmount() {
 		return invoiceAmount;
 	}
 	/**
 	 * @param invoiceAmount the invoiceAmount to set
 	 */
-	public void setInvoiceAmount(double invoiceAmount) {
+	public void setInvoiceAmount(float invoiceAmount) {
 		this.invoiceAmount = invoiceAmount;
 	}
 	/**
@@ -123,13 +123,13 @@ public class InvoiceDetails {
 	/**
 	 * @return the discountedAmount
 	 */
-	public double getDiscountedAmount() {
+	public float getDiscountedAmount() {
 		return discountedAmount;
 	}
 	/**
 	 * @param discountedAmount the discountedAmount to set
 	 */
-	public void setDiscountedAmount(double discountedAmount) {
+	public void setDiscountedAmount(float discountedAmount) {
 		this.discountedAmount = discountedAmount;
 	}
 	/**
@@ -147,13 +147,13 @@ public class InvoiceDetails {
 	/**
 	 * @return the amoutToBePaidAfterDiscounting
 	 */
-	public double getAmoutToBePaidAfterDiscounting() {
+	public float getAmoutToBePaidAfterDiscounting() {
 		return amoutToBePaidAfterDiscounting;
 	}
 	/**
 	 * @param amoutToBePaidAfterDiscounting the amoutToBePaidAfterDiscounting to set
 	 */
-	public void setAmoutToBePaidAfterDiscounting(double amoutToBePaidAfterDiscounting) {
+	public void setAmoutToBePaidAfterDiscounting(float amoutToBePaidAfterDiscounting) {
 		this.amoutToBePaidAfterDiscounting = amoutToBePaidAfterDiscounting;
 	}
 	

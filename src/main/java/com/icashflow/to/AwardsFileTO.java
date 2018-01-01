@@ -8,38 +8,38 @@ import java.util.List;
  *
  */
 public class AwardsFileTO {
-	private double minDiscount;
-	private double maxDiscount;
+	private float minDiscount;
+	private float maxDiscount;
 	private String desiredDateOfPayment;
-	private double mroi;
-	private double droi;
-	private double minReserveAmount;
-	private double maxReserveAmount;
+	private float mroi;
+	private float droi;
+	private float minReserveAmount;
+	private float maxReserveAmount;
 	
 	private List<InvoiceDiscountDetails> invoiceDiscountDetailsList;
 	
 	/**
 	 * @return the minDiscount
 	 */
-	public double getMinDiscount() {
+	public float getMinDiscount() {
 		return minDiscount;
 	}
 	/**
 	 * @param minDiscount the minDiscount to set
 	 */
-	public void setMinDiscount(double minDiscount) {
+	public void setMinDiscount(float minDiscount) {
 		this.minDiscount = minDiscount;
 	}
 	/**
 	 * @return the maxDiscount
 	 */
-	public double getMaxDiscount() {
+	public float getMaxDiscount() {
 		return maxDiscount;
 	}
 	/**
 	 * @param maxDiscount the maxDiscount to set
 	 */
-	public void setMaxDiscount(double maxDiscount) {
+	public void setMaxDiscount(float maxDiscount) {
 		this.maxDiscount = maxDiscount;
 	}
 	/**
@@ -57,49 +57,49 @@ public class AwardsFileTO {
 	/**
 	 * @return the mroi
 	 */
-	public double getMroi() {
+	public float getMroi() {
 		return mroi;
 	}
 	/**
 	 * @param mroi the mroi to set
 	 */
-	public void setMroi(double mroi) {
+	public void setMroi(float mroi) {
 		this.mroi = mroi;
 	}
 	/**
 	 * @return the droi
 	 */
-	public double getDroi() {
+	public float getDroi() {
 		return droi;
 	}
 	/**
 	 * @param droi the droi to set
 	 */
-	public void setDroi(double droi) {
+	public void setDroi(float droi) {
 		this.droi = droi;
 	}
 	/**
 	 * @return the minReserveAmount
 	 */
-	public double getMinReserveAmount() {
+	public float getMinReserveAmount() {
 		return minReserveAmount;
 	}
 	/**
 	 * @param minReserveAmount the minReserveAmount to set
 	 */
-	public void setMinReserveAmount(double minReserveAmount) {
+	public void setMinReserveAmount(float minReserveAmount) {
 		this.minReserveAmount = minReserveAmount;
 	}
 	/**
 	 * @return the maxReserveAmount
 	 */
-	public double getMaxReserveAmount() {
+	public float getMaxReserveAmount() {
 		return maxReserveAmount;
 	}
 	/**
 	 * @param maxReserveAmount the maxReserveAmount to set
 	 */
-	public void setMaxReserveAmount(double maxReserveAmount) {
+	public void setMaxReserveAmount(float maxReserveAmount) {
 		this.maxReserveAmount = maxReserveAmount;
 	}
 	/**

@@ -2,21 +2,21 @@ package com.icashflow.command;
 
 public class SellerIcashCommand {
 	
-	private double minDiscount;
-	private double maxDiscount;
+	private float minDiscount;
+	private float maxDiscount;
 	private String desiredDateOfPayment;
 	private String sellerId;
 	
-	public double getMinDiscount() {
+	public float getMinDiscount() {
 		return minDiscount;
 	}
-	public void setMinDiscount(double minDiscount) {
+	public void setMinDiscount(float minDiscount) {
 		this.minDiscount = minDiscount;
 	}
-	public double getMaxDiscount() {
+	public float getMaxDiscount() {
 		return maxDiscount;
 	}
-	public void setMaxDiscount(double maxDiscount) {
+	public void setMaxDiscount(float maxDiscount) {
 		this.maxDiscount = maxDiscount;
 	}
 	

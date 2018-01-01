@@ -1,4 +1,4 @@
-package com.icashflow.command;
+package com.icashflow.to;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -6,12 +6,13 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Rohith Pingili
  *
  */
-public class BuyerIcashCommand {
+public class BuyerInputDetails {
 	private MultipartFile file;
 	private float mroi;
 	private float droi;
 	private float minReserveAmount;
 	private float maxReserveAmount;
+	private String buyerKey;
 	/**
 	 * @return the file
 	 */
@@ -72,4 +73,17 @@ public class BuyerIcashCommand {
 	public void setMaxReserveAmount(float maxReserveAmount) {
 		this.maxReserveAmount = maxReserveAmount;
 	}
+	/**
+	 * @return the buyerKey
+	 */
+	public String getBuyerKey() {
+		return buyerKey;
+	}
+	/**
+	 * @param buyerKey the buyerKey to set
+	 */
+	public void setBuyerKey(String buyerKey) {
+		this.buyerKey = buyerKey;
+	}
+	
 }
